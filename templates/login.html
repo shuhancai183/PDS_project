@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Log in - snickr{% endblock %}
+{% block body %}
+<section class="auth-shell">
+  <div>
+    <p class="eyebrow">CS 6083 Project 2</p>
+    <h1>Sign in to snickr</h1>
+    <p class="muted">Demo accounts from the sample data use usernames like alice, bob, and cara with passwords like hash_alice, hash_bob, and hash_cara.</p>
+  </div>
+  <form class="panel" method="post">
+    <label>Username or email
+      <input name="username" required autocomplete="username">
+    </label>
+    <label>Password
+      <input name="password" type="password" required autocomplete="current-password">
+    </label>
+    <button class="primary" type="submit">Log in</button>
+    <p class="muted">New here? <a href="{{ url_for('register') }}">Create an account</a>.</p>
+  </form>
+</section>
+{% endblock %}

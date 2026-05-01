@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}#{{ channel.name }} - snickr{% endblock %}
+{% block body %}
+<section class="header-row">
+  <div>
+    <p class="eyebrow"><a href="{{ url_for('workspace', workspace_id=channel.workspace_id) }}">{{ channel.workspace }}</a> / {{ channel.channel_type }}</p>
+    <h1>#{{ channel.name }}</h1>
+  </div>
+</section>
+
+<section class="grid three">
+  <div class="stack span-two">
+    <h2>Messages</h2>
+    <div class="messages">
+      {% for message in messages %}
+        <article class="message">
+          <div>
+            <strong>{{ message.nickname }}</strong>
+            <small>@{{ message.username }} · {{ message.posted_at.strftime("%Y-%m-%d %H:%M") }}</small>
+          </div>
+          <p>{{ message.body }}</p>
+        </article>
+      {% else %}
+        <p class="muted">No messages yet.</p>
+      {% endfor %}
+    </div>
+    <form class="composer" method="post">
+      <textarea name="body" rows="3" placeholder="Write a message" required></textarea>
+      <button class="primary" type="submit">Post</button>
+    </form>
+  </div>
+
+  <aside class="stack">
+    <h2>Members</h2>
+    {% for member in members %}
+      <div class="item compact"><span><strong>{{ member.username }}</strong><small>{{ member.nickname }}</small></span></div>
+    {% endfor %}
+    <form class="panel slim" method="post" action="{{ url_for('invite_channel', channel_id=channel.channel_id) }}">
+      <h2>Invite member</h2>
+      <label>Username
+        <input name="username" required>
+      </label>
+      <button type="submit">Invite</button>
+    </form>
+  </aside>
+</section>
+{% endblock %}

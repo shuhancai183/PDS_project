@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ workspace.name }} - snickr{% endblock %}
+{% block body %}
+<section class="header-row">
+  <div>
+    <p class="eyebrow">{{ membership.role }} member</p>
+    <h1>{{ workspace.name }}</h1>
+    <p class="muted">{{ workspace.description }}</p>
+  </div>
+</section>
+
+<section class="grid three">
+  <div class="stack span-two">
+    <h2>Channels you can read</h2>
+    {% for channel in channels %}
+      <a class="item" href="{{ url_for('channel', channel_id=channel.channel_id) }}">
+        <span>
+          <strong>#{{ channel.name }}</strong>
+          <small>{{ channel.channel_type }} channel</small>
+        </span>
+        <span class="pill">{{ channel.message_count }} messages</span>
+      </a>
+    {% else %}
+      <p class="muted">No joined channels in this workspace.</p>
+    {% endfor %}
+  </div>
+
+  <form class="panel" method="post">
+    <h2>Create channel</h2>
+    <label>Name
+      <input name="channel_name" required>
+    </label>
+    <label>Type
+      <select name="channel_type">
+        <option value="public">public</option>
+        <option value="private">private</option>
+        <option value="direct">direct</option>
+      </select>
+    </label>
+    <label>Invite usernames
+      <input name="invitees" placeholder="bob, cara">
+    </label>
+    <button class="primary" type="submit">Create channel</button>
+  </form>
+</section>
+
+<section class="grid two">
+  <div class="stack">
+    <h2>Members</h2>
+    {% for member in members %}
+      <div class="item compact">
+        <span><strong>{{ member.username }}</strong><small>{{ member.nickname }}</small></span>
+        <span class="pill">{{ member.role }}</span>
+      </div>
+    {% endfor %}
+  </div>
+  {% if membership.role == "admin" %}
+    <form class="panel" method="post" action="{{ url_for('invite_workspace', workspace_id=workspace.workspace_id) }}">
+      <h2>Invite to workspace</h2>
+      <label>Email
+        <input name="email" type="email" required>
+      </label>
+      <button type="submit">Send invitation</button>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}

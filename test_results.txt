@@ -1,0 +1,51 @@
+Expected PostgreSQL test transcript summary
+===========================================
+
+Task 1: create a new user account
+user_id | email             | username | nickname
+13      | frank@example.com | frank    | Frank
+
+Task 2: create a public channel by authorized workspace member Cara
+channel_id | workspace_id | name          | channel_type | created_by | initial_member
+13         | 1            | announcements | public       | 3          | 3
+
+Task 3: current administrators per workspace
+workspace    | username | email
+Acme Lab     | alice    | alice@example.com
+Acme Lab     | bob      | bob@example.com
+Coop Board   | cara     | cara@example.com
+Design Guild | hank     | hank@example.com
+Design Guild | maya     | maya@example.com
+Study Hub    | ivy      | ivy@example.com
+
+Task 4: old pending invitations to public channels in Acme Lab as of 2026-04-26
+channel         | pending_invites_older_than_5_days
+announcements   | 0
+general         | 1
+product         | 1
+sprint-planning | 1
+
+Task 5: all messages in #general
+message_id | posted_at        | username | body
+1          | 2026-04-02 08:20 | alice    | Welcome to Acme Lab general.
+2          | 2026-04-03 10:00 | bob      | The perpendicular test rig is ready.
+3          | 2026-04-03 12:30 | cara     | I can review the onboarding checklist.
+
+Task 6: all messages posted by Bob
+message_id | workspace | channel | posted_at        | body
+2          | Acme Lab  | general | 2026-04-03 10:00 | The perpendicular test rig is ready.
+4          | Acme Lab  | product | 2026-04-05 10:10 | Product roadmap review at 3pm.
+
+Task 7: messages accessible to Cara containing perpendicular
+message_id | workspace | channel | sender | posted_at        | body
+2          | Acme Lab  | general | bob    | 2026-04-03 10:00 | The perpendicular test rig is ready.
+8          | Coop Board | maintenance | alice | 2026-04-04 12:15 | The stair railing is perpendicular to the landing.
+
+Access-control observation:
+Cara is a member of Acme Lab and #general, and she is also a member of Coop Board
+and #maintenance. Therefore she sees Bob's public #general message and Alice's
+#maintenance message containing "perpendicular." She does not see Alice's private
+#hiring message containing the same keyword because she is not a member of that
+channel, and she also does not see unrelated matching messages from workspaces
+or channels where she lacks membership. This verifies that workspace membership
+alone is not enough; channel membership is also required.

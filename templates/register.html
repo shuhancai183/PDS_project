@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Register - snickr{% endblock %}
+{% block body %}
+<section class="auth-shell">
+  <div>
+    <p class="eyebrow">Join the workspace flow</p>
+    <h1>Create an account</h1>
+    <p class="muted">Registration writes a hashed password into PostgreSQL and starts a browser session for the new user.</p>
+  </div>
+  <form class="panel" method="post">
+    <label>Email
+      <input name="email" type="email" required autocomplete="email">
+    </label>
+    <label>Username
+      <input name="username" required autocomplete="username">
+    </label>
+    <label>Nickname
+      <input name="nickname" required autocomplete="name">
+    </label>
+    <label>Password
+      <input name="password" type="password" required autocomplete="new-password">
+    </label>
+    <button class="primary" type="submit">Register</button>
+    <p class="muted">Already registered? <a href="{{ url_for('login') }}">Log in</a>.</p>
+  </form>
+</section>
+{% endblock %}

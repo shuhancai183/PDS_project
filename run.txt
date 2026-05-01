@@ -1,0 +1,137 @@
+snickr Project 2 run guide
+==========================
+
+Project directory:
+E:\nyu homework\database\project
+
+Database:
+PostgreSQL database name: snickr
+PostgreSQL user: postgres
+PostgreSQL password: csh1q2w3e4r
+Connection URL: postgresql://postgres:csh1q2w3e4r@localhost:5432/snickr
+
+
+1. First-time setup
+-------------------
+
+Open PowerShell and run:
+
+cd "E:\nyu homework\database\project"
+python -m pip install -r requirements.txt
+
+Make sure PostgreSQL has a database named snickr.
+
+Then initialize the database:
+
+.\init_db.ps1
+
+This loads schema.sql and sample_data.sql. If the tables already exist, this
+script will not recreate them or insert duplicate sample rows.
+
+
+2. Start the web app
+--------------------
+
+cd "E:\nyu homework\database\project"
+.\start.ps1
+
+Open this URL in a browser:
+
+http://127.0.0.1:5000/login
+
+Demo accounts:
+
+alice / hash_alice
+bob / hash_bob
+cara / hash_cara
+maya / hash_maya
+
+
+3. Stop the web app
+-------------------
+
+If the Flask terminal is active, press Ctrl+C.
+
+If a background or old Flask process is still using port 5000, run:
+
+.\stop_server.ps1
+
+
+4. Check that the app and database are working
+----------------------------------------------
+
+Run:
+
+.\check_app.ps1
+
+Expected result:
+
+DATABASE_URL: postgresql://postgres:csh1q2w3e4r@localhost:5432/snickr
+users count: 12
+alice row: {'user_id': 1, 'username': 'alice', 'password_hash': 'hash_alice'}
+alice login status: 200
+page title snippet: <title>Workspaces - snickr</title>
+
+The users count can be larger than 12 if you created accounts during testing.
+
+
+5. Restore the database to the original demo state
+--------------------------------------------------
+
+Stop the web app first if it is running:
+
+.\stop_server.ps1
+
+Then reset the database:
+
+.\reset_db.ps1
+
+This drops and recreates the project tables, then reloads the original sample
+data from schema.sql and sample_data.sql.
+
+After reset, start the app again:
+
+.\start.ps1
+
+
+6. Useful demo flow
+-------------------
+
+1. Log in as alice / hash_alice.
+2. Open Acme Lab.
+3. Create a public channel.
+4. Post a message.
+5. Invite a user to a workspace or channel.
+6. Log out and log in as the invited user to accept or decline the invitation.
+7. Log in as cara / hash_cara.
+8. Search for perpendicular.
+
+Cara should see accessible matching messages in #general and #maintenance, but
+not the private #hiring message.
+
+
+7. Public deployment on Render
+------------------------------
+
+See render_deploy.txt.
+
+Short version:
+
+1. Push this project to GitHub. Do not commit .env.
+2. In Render, create a new Python Web Service from the GitHub repo.
+3. Use Build Command:
+
+pip install -r requirements.txt
+
+4. Use Start Command:
+
+gunicorn app:app
+
+5. Add Render environment variables:
+
+DATABASE_URL = Neon PostgreSQL connection string
+SECRET_KEY = long random string
+
+6. After first deploy, open Render Shell and run:
+
+python -m flask --app app init-db

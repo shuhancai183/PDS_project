@@ -1,0 +1,128 @@
+Render deployment guide for snickr
+==================================
+
+Important security note:
+The Neon connection string/password was shown during setup. Before a real demo,
+rotate/reset the Neon database password and use the new connection string in
+Render. Do not commit .env to GitHub.
+
+
+1. Files prepared for Render
+----------------------------
+
+requirements.txt includes gunicorn.
+.gitignore excludes .env, Python cache files, Flask server logs, and LaTeX build
+artifacts.
+
+Render settings:
+
+Build Command:
+pip install -r requirements.txt
+
+Start Command:
+gunicorn app:app
+
+
+2. Push code to GitHub
+----------------------
+
+From this project directory:
+
+git init
+git add .
+git commit -m "Prepare snickr project 2 for Render"
+git branch -M main
+git remote add origin YOUR_GITHUB_REPO_URL
+git push -u origin main
+
+If git says the repository already exists locally, skip git init.
+
+Before pushing, verify .env is ignored:
+
+git status --short
+
+.env should not appear in the files to be committed.
+
+
+3. Create the Render Web Service
+--------------------------------
+
+In Render:
+
+New -> Web Service
+Connect your GitHub repository
+
+Use these values:
+
+Name: snickr-project2
+Language: Python 3
+Branch: main
+Build Command: pip install -r requirements.txt
+Start Command: gunicorn app:app
+Instance Type: Free
+
+
+4. Add Render environment variables
+-----------------------------------
+
+In the Render service settings, add:
+
+DATABASE_URL = your Neon PostgreSQL connection string
+SECRET_KEY = a long random string, for example generated locally
+
+PowerShell command to generate a random SECRET_KEY:
+
+python -c "import secrets; print(secrets.token_hex(32))"
+
+The DATABASE_URL should look like:
+
+postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=require&channel_binding=require
+
+
+5. Initialize the Neon database from Render
+-------------------------------------------
+
+After the first successful deploy, open the Render service Shell and run:
+
+python -m flask --app app init-db
+
+If you want to wipe Neon and restore the original sample data:
+
+python -m flask --app app init-db --reset
+
+
+6. Open the deployed site
+-------------------------
+
+Render will provide a URL like:
+
+https://snickr-project2.onrender.com
+
+Open:
+
+https://snickr-project2.onrender.com/login
+
+Demo accounts:
+
+alice / hash_alice
+bob / hash_bob
+cara / hash_cara
+maya / hash_maya
+
+
+7. Troubleshooting
+------------------
+
+If deployment fails with "gunicorn: command not found", confirm requirements.txt
+contains gunicorn and redeploy.
+
+If pages show database errors, confirm DATABASE_URL is set in Render and includes
+sslmode=require.
+
+If login says invalid credentials, run the Render Shell command:
+
+python -m flask --app app init-db
+
+If you changed sample data while testing, use:
+
+python -m flask --app app init-db --reset

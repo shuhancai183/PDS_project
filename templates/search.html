@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Search - snickr{% endblock %}
+{% block body %}
+<section class="header-row">
+  <div>
+    <p class="eyebrow">Accessible content only</p>
+    <h1>Search</h1>
+  </div>
+  <form class="search-box" action="{{ url_for('search') }}">
+    <input name="q" value="{{ keyword }}" placeholder="Keyword">
+    <button type="submit">Search</button>
+  </form>
+</section>
+
+<section class="stack">
+  {% if keyword %}
+    <h2>Results for "{{ keyword }}"</h2>
+    {% for result in results %}
+      <a class="item" href="{{ url_for('channel', channel_id=result.channel_id) }}">
+        <span>
+          <strong>{{ result.workspace }} / #{{ result.channel }}</strong>
+          <small>{{ result.username }} · {{ result.posted_at.strftime("%Y-%m-%d %H:%M") }}</small>
+          <span>{{ result.body }}</span>
+        </span>
+      </a>
+    {% else %}
+      <p class="muted">No accessible messages match this keyword.</p>
+    {% endfor %}
+  {% else %}
+    <p class="muted">Enter a keyword to search messages in workspaces and channels you belong to.</p>
+  {% endif %}
+</section>
+{% endblock %}
