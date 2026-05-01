@@ -368,8 +368,25 @@ def invite_workspace(workspace_id):
     if membership is None or membership["role"] != "admin":
         flash("Only workspace admins can invite workspace members.", "error")
         return redirect(url_for("workspace", workspace_id=workspace_id))
-    email = request.form["email"].strip().lower()
-    invitee = query_one("SELECT user_id FROM users WHERE lower(email) = lower(%s)", (email,))
+    invitee_text = request.form["invitee"].strip()
+    if not invitee_text:
+        flash("Enter an email address or username.", "error")
+        return redirect(url_for("workspace", workspace_id=workspace_id))
+    if "@" in invitee_text:
+        invitee = query_one(
+            "SELECT user_id, email FROM users WHERE lower(email) = lower(%s)",
+            (invitee_text.lower(),),
+        )
+        invited_email = invitee["email"] if invitee else invitee_text.lower()
+    else:
+        invitee = query_one(
+            "SELECT user_id, email FROM users WHERE username = %s",
+            (invitee_text,),
+        )
+        if invitee is None:
+            flash("No user with that username exists. Use an email address to invite a new user.", "error")
+            return redirect(url_for("workspace", workspace_id=workspace_id))
+        invited_email = invitee["email"]
     try:
         with get_db(), get_db().cursor() as cur:
             cur.execute(
@@ -382,7 +399,7 @@ def invite_workspace(workspace_id):
                 """,
                 (
                     workspace_id,
-                    email,
+                    invited_email,
                     invitee["user_id"] if invitee else None,
                     g.user["user_id"],
                 ),
