@@ -11,7 +11,6 @@ Project 2 Flask web interface.
 - `app.py`: Project 2 web application.
 - `templates/`: server-rendered HTML templates.
 - `static/style.css`: application styling.
-- `snickr_part2_report.tex`: combined Project 1 and Project 2 documentation.
 
 ## Setup
 
