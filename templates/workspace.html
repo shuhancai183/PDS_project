@@ -57,8 +57,8 @@
   {% if membership.role == "admin" %}
     <form class="panel" method="post" action="{{ url_for('invite_workspace', workspace_id=workspace.workspace_id) }}">
       <h2>Invite to workspace</h2>
-      <label>Email
-        <input name="email" type="email" required>
+      <label>Email or username
+        <input name="invitee" required>
       </label>
       <button type="submit">Send invitation</button>
     </form>
