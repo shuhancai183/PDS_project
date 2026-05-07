@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Workspaces - snickr{% endblock %}
+{% block body %}
+<section class="header-row">
+  <div>
+    <p class="eyebrow">Signed in as {{ g.user.username }}</p>
+    <h1>Workspaces</h1>
+  </div>
+  <form class="search-box" action="{{ url_for('search') }}">
+    <input name="q" placeholder="Search accessible messages">
+    <button type="submit">Search</button>
+  </form>
+</section>
+
+<section class="grid two">
+  <div class="stack">
+    <h2>Your spaces</h2>
+    {% for workspace in workspaces %}
+      <a class="item" href="{{ url_for('workspace', workspace_id=workspace.workspace_id) }}">
+        <span>
+          <strong>{{ workspace.name }}</strong>
+          <small>{{ workspace.description or "No description" }}</small>
+        </span>
+        <span class="pill">{{ workspace.role }}</span>
+      </a>
+    {% else %}
+      <p class="muted">No workspaces yet.</p>
+    {% endfor %}
+  </div>
+
+  <form class="panel" method="post">
+    <h2>Create workspace</h2>
+    <label>Name
+      <input name="name" required>
+    </label>
+    <label>Description
+      <textarea name="description" rows="4"></textarea>
+    </label>
+    <button class="primary" type="submit">Create</button>
+  </form>
+</section>
+
+<section class="stack">
+  <h2>Your bookmarks</h2>
+  {% for bookmark in bookmarks %}
+    <div class="item">
+      <a href="{{ bookmark.target_url }}">
+        <span>
+          <strong>{{ bookmark.label }}</strong>
+          <small>{{ bookmark.target_type }}</small>
+        </span>
+      </a>
+      <form method="post" action="{{ url_for('delete_bookmark') }}">
+        <input type="hidden" name="target_url" value="{{ bookmark.target_url }}">
+        <input type="hidden" name="next" value="{{ url_for('dashboard') }}">
+        <button type="submit">Remove</button>
+      </form>
+    </div>
+  {% else %}
+    <p class="muted">No bookmarks yet.</p>
+  {% endfor %}
+</section>
+
+<section class="grid two">
+  <div class="stack">
+    <h2>Workspace invitations</h2>
+    {% for invite in workspace_invites %}
+      <div class="item">
+        <span><strong>{{ invite.workspace }}</strong><small>Invited by {{ invite.invited_by }}</small></span>
+        <span class="actions">
+          <form method="post" action="{{ url_for('respond_workspace_invitation', invitation_id=invite.workspace_invitation_id, decision='accepted') }}"><button>Accept</button></form>
+          <form method="post" action="{{ url_for('respond_workspace_invitation', invitation_id=invite.workspace_invitation_id, decision='declined') }}"><button>Decline</button></form>
+        </span>
+      </div>
+    {% else %}
+      <p class="muted">No pending workspace invitations.</p>
+    {% endfor %}
+  </div>
+  <div class="stack">
+    <h2>Channel invitations</h2>
+    {% for invite in channel_invites %}
+      <div class="item">
+        <span><strong>{{ invite.workspace }} / #{{ invite.channel }}</strong><small>Invited by {{ invite.invited_by }}</small></span>
+        <span class="actions">
+          <form method="post" action="{{ url_for('respond_channel_invitation', invitation_id=invite.channel_invitation_id, decision='accepted') }}"><button>Accept</button></form>
+          <form method="post" action="{{ url_for('respond_channel_invitation', invitation_id=invite.channel_invitation_id, decision='declined') }}"><button>Decline</button></form>
+        </span>
+      </div>
+    {% else %}
+      <p class="muted">No pending channel invitations.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

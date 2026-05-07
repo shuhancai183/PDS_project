@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}#{{ channel.name }} - snickr{% endblock %}
+{% block body %}
+<section class="header-row">
+  <div>
+    <p class="eyebrow"><a href="{{ url_for('workspace', workspace_id=channel.workspace_id) }}">{{ channel.workspace }}</a> / {{ channel.channel_type }}</p>
+    <h1>#{{ channel.name }}</h1>
+  </div>
+  {% if bookmarked %}
+    <form method="post" action="{{ url_for('delete_bookmark') }}">
+      <input type="hidden" name="target_url" value="{{ bookmark_url }}">
+      <input type="hidden" name="next" value="{{ bookmark_url }}">
+      <button type="submit">Remove bookmark</button>
+    </form>
+  {% else %}
+    <form method="post" action="{{ url_for('add_bookmark') }}">
+      <input type="hidden" name="target_url" value="{{ bookmark_url }}">
+      <input type="hidden" name="label" value="{{ channel.workspace }} / #{{ channel.name }}">
+      <input type="hidden" name="next" value="{{ bookmark_url }}">
+      <button type="submit">Bookmark</button>
+    </form>
+  {% endif %}
+</section>
+
+<section class="grid three">
+  <div class="stack span-two">
+    <h2>Messages</h2>
+    <div
+      class="messages"
+      data-channel-id="{{ channel.channel_id }}"
+      data-current-user-id="{{ g.user.user_id }}"
+      data-poll-url="{{ url_for('channel_messages_json', channel_id=channel.channel_id) }}"
+    >
+      {% for message in messages %}
+        <article class="message" data-message-id="{{ message.message_id }}">
+          <div>
+            <strong>{{ message.nickname }}</strong>
+            <small>@{{ message.username }} · {{ message.posted_at.strftime("%Y-%m-%d %H:%M") }}</small>
+          </div>
+          {% if message.withdrawn_at %}
+            <p class="muted">This message was withdrawn.</p>
+          {% else %}
+            <p>{{ message.body }}</p>
+            {% if message.sender_id == g.user.user_id %}
+              <form class="inline-form" method="post" action="{{ url_for('withdraw_message', message_id=message.message_id) }}">
+                <button type="submit">Withdraw</button>
+              </form>
+            {% endif %}
+          {% endif %}
+        </article>
+      {% else %}
+        <p class="muted" data-empty-state>No messages yet.</p>
+      {% endfor %}
+    </div>
+    <form class="composer" method="post">
+      <textarea name="body" rows="3" placeholder="Write a message" required></textarea>
+      <button class="primary" type="submit">Post</button>
+    </form>
+  </div>
+
+  <aside class="stack">
+    <h2>Members</h2>
+    {% for member in members %}
+      <div class="item compact"><span><strong>{{ member.username }}</strong><small>{{ member.nickname }}</small></span></div>
+    {% endfor %}
+    {% if channel.channel_type != "direct" %}
+      <form class="panel slim" method="post" action="{{ url_for('invite_channel', channel_id=channel.channel_id) }}">
+        <h2>Invite member</h2>
+        <label>Username
+          <input name="username" required>
+        </label>
+        <button type="submit">Invite</button>
+      </form>
+    {% endif %}
+  </aside>
+</section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='channel_poll.js') }}"></script>
+{% endblock %}

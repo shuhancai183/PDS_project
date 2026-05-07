@@ -1,0 +1,21 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true,
+                    "requestCert": true
+                }
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "ep-long-truth-antfykim-pooler.c-6.us-east-1.aws.neon.tech",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "snickr-neon",
+            "database": "neondb",
+            "username": "neondb_owner",
+            "password": "npg_sIvVLE97yrql"
+        }
+    ]
+}

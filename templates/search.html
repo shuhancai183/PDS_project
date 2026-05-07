@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Search - snickr{% endblock %}
+{% block body %}
+<section class="header-row">
+  <div>
+    <p class="eyebrow">Accessible content only</p>
+    <h1>Search</h1>
+  </div>
+  <div class="header-actions">
+    <form class="search-box" action="{{ url_for('search') }}">
+      <input name="q" value="{{ keyword }}" placeholder="Keyword">
+      <button type="submit">Search</button>
+    </form>
+    {% if bookmark_url %}
+      {% if bookmarked %}
+        <form method="post" action="{{ url_for('delete_bookmark') }}">
+          <input type="hidden" name="target_url" value="{{ bookmark_url }}">
+          <input type="hidden" name="next" value="{{ bookmark_url }}">
+          <button type="submit">Remove bookmark</button>
+        </form>
+      {% else %}
+        <form method="post" action="{{ url_for('add_bookmark') }}">
+          <input type="hidden" name="target_url" value="{{ bookmark_url }}">
+          <input type="hidden" name="label" value="Search: {{ keyword }}">
+          <input type="hidden" name="next" value="{{ bookmark_url }}">
+          <button type="submit">Bookmark</button>
+        </form>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+
+<section class="stack">
+  {% if keyword %}
+    <h2>Results for "{{ keyword }}"</h2>
+    {% for result in results %}
+      <a class="item" href="{{ url_for('channel', channel_id=result.channel_id) }}">
+        <span>
+          <strong>{{ result.workspace }} / #{{ result.channel }}</strong>
+          <small>{{ result.username }} · {{ result.posted_at.strftime("%Y-%m-%d %H:%M") }}</small>
+          <span>{{ result.body }}</span>
+        </span>
+      </a>
+    {% else %}
+      <p class="muted">No accessible messages match this keyword.</p>
+    {% endfor %}
+  {% else %}
+    <p class="muted">Enter a keyword to search messages in workspaces and channels you belong to.</p>
+  {% endif %}
+</section>
+{% endblock %}

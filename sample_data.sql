@@ -1,0 +1,158 @@
+INSERT INTO users(user_id, email, username, nickname, password_hash, created_at) VALUES
+    (1, 'alice@example.com', 'alice', 'Alice A.', 'hash_alice', '2026-04-01 09:00:00-04'),
+    (2, 'bob@example.com', 'bob', 'Bobby', 'hash_bob', '2026-04-01 09:05:00-04'),
+    (3, 'cara@example.com', 'cara', 'Cara', 'hash_cara', '2026-04-01 09:10:00-04'),
+    (4, 'dan@example.com', 'dan', 'Dan', 'hash_dan', '2026-04-01 09:15:00-04'),
+    (5, 'erin@example.com', 'erin', 'Erin', 'hash_erin', '2026-04-01 09:20:00-04'),
+    (6, 'maya@example.com', 'maya', 'Maya', 'hash_maya', '2026-04-01 09:25:00-04'),
+    (7, 'gina@example.com', 'gina', 'Gina', 'hash_gina', '2026-04-01 09:30:00-04'),
+    (8, 'hank@example.com', 'hank', 'Hank', 'hash_hank', '2026-04-01 09:35:00-04'),
+    (9, 'ivy@example.com', 'ivy', 'Ivy', 'hash_ivy', '2026-04-01 09:40:00-04'),
+    (10, 'jack@example.com', 'jack', 'Jack', 'hash_jack', '2026-04-01 09:45:00-04'),
+    (11, 'ken@example.com', 'ken', 'Ken', 'hash_ken', '2026-04-01 09:50:00-04'),
+    (12, 'lara@example.com', 'lara', 'Lara', 'hash_lara', '2026-04-01 09:55:00-04');
+
+INSERT INTO workspaces(workspace_id, name, description, created_by, created_at) VALUES
+    (1, 'Acme Lab', 'Engineering collaboration for Acme Lab.', 1, '2026-04-02 08:00:00-04'),
+    (2, 'Coop Board', 'Building coop board workspace.', 3, '2026-04-03 08:00:00-04'),
+    (3, 'Design Guild', 'Product design and research workspace.', 6, '2026-04-04 08:00:00-04'),
+    (4, 'Study Hub', 'Course planning and exam preparation workspace.', 9, '2026-04-05 08:00:00-04');
+
+INSERT INTO workspace_members(workspace_id, user_id, role, joined_at) VALUES
+    (1, 1, 'admin', '2026-04-02 08:00:00-04'),
+    (1, 2, 'admin', '2026-04-02 10:00:00-04'),
+    (1, 3, 'member', '2026-04-03 12:00:00-04'),
+    (1, 6, 'member', '2026-04-08 09:00:00-04'),
+    (1, 7, 'member', '2026-04-09 09:00:00-04'),
+    (1, 8, 'member', '2026-04-10 09:00:00-04'),
+    (2, 3, 'admin', '2026-04-03 08:00:00-04'),
+    (2, 1, 'member', '2026-04-04 12:00:00-04'),
+    (2, 5, 'member', '2026-04-05 12:00:00-04'),
+    (2, 11, 'member', '2026-04-06 12:00:00-04'),
+    (3, 6, 'admin', '2026-04-04 08:00:00-04'),
+    (3, 7, 'member', '2026-04-04 10:00:00-04'),
+    (3, 8, 'admin', '2026-04-04 11:00:00-04'),
+    (3, 10, 'member', '2026-04-05 11:00:00-04'),
+    (4, 9, 'admin', '2026-04-05 08:00:00-04'),
+    (4, 10, 'member', '2026-04-05 10:00:00-04'),
+    (4, 12, 'member', '2026-04-06 10:00:00-04');
+
+INSERT INTO workspace_invitations(workspace_invitation_id, workspace_id, invited_email, invited_user_id, invited_by, status, invited_at, responded_at) VALUES
+    (1, 1, 'dan@example.com', 4, 1, 'pending', '2026-04-15 09:00:00-04', NULL),
+    (2, 1, 'cara@example.com', 3, 1, 'accepted', '2026-04-02 09:00:00-04', '2026-04-03 12:00:00-04'),
+    (3, 2, 'alice@example.com', 1, 3, 'accepted', '2026-04-03 09:00:00-04', '2026-04-04 12:00:00-04'),
+    (4, 1, 'erin@example.com', 5, 2, 'pending', '2026-04-20 09:00:00-04', NULL),
+    (5, 3, 'dan@example.com', 4, 6, 'declined', '2026-04-07 09:00:00-04', '2026-04-08 16:30:00-04'),
+    (6, 4, 'alice@example.com', 1, 9, 'pending', '2026-04-18 14:00:00-04', NULL),
+    (7, 3, 'jack@example.com', 10, 6, 'accepted', '2026-04-04 09:00:00-04', '2026-04-05 11:00:00-04'),
+    (8, 2, 'maya@example.com', 6, 3, 'revoked', '2026-04-10 09:30:00-04', '2026-04-12 17:00:00-04');
+
+INSERT INTO channels(channel_id, workspace_id, name, channel_type, created_by, created_at) VALUES
+    (1, 1, 'general', 'public', 1, '2026-04-02 08:15:00-04'),
+    (2, 1, 'product', 'public', 2, '2026-04-05 10:00:00-04'),
+    (3, 1, 'hiring', 'private', 1, '2026-04-06 11:00:00-04'),
+    (4, 1, 'dm-alice-bob', 'direct', 1, '2026-04-07 12:00:00-04'),
+    (5, 2, 'maintenance', 'public', 3, '2026-04-04 09:00:00-04'),
+    (6, 1, 'sprint-planning', 'public', 6, '2026-04-08 09:15:00-04'),
+    (7, 1, 'leadership', 'private', 1, '2026-04-09 10:00:00-04'),
+    (8, 1, 'dm-cara-maya', 'direct', 3, '2026-04-10 11:00:00-04'),
+    (9, 3, 'design-general', 'public', 6, '2026-04-04 08:30:00-04'),
+    (10, 3, 'ux-research', 'private', 8, '2026-04-05 13:00:00-04'),
+    (11, 4, 'study-general', 'public', 9, '2026-04-05 08:30:00-04'),
+    (12, 4, 'exam-prep', 'private', 9, '2026-04-06 15:00:00-04');
+
+INSERT INTO channel_members(channel_id, user_id, joined_at) VALUES
+    (1, 1, '2026-04-02 08:15:00-04'),
+    (1, 2, '2026-04-02 10:00:00-04'),
+    (1, 3, '2026-04-03 12:05:00-04'),
+    (2, 1, '2026-04-05 10:00:00-04'),
+    (2, 2, '2026-04-05 10:01:00-04'),
+    (3, 1, '2026-04-06 11:00:00-04'),
+    (3, 2, '2026-04-06 11:05:00-04'),
+    (4, 1, '2026-04-07 12:00:00-04'),
+    (4, 2, '2026-04-07 12:00:00-04'),
+    (5, 3, '2026-04-04 09:00:00-04'),
+    (5, 1, '2026-04-04 12:00:00-04'),
+    (6, 1, '2026-04-08 09:15:00-04'),
+    (6, 2, '2026-04-08 09:16:00-04'),
+    (6, 3, '2026-04-08 09:17:00-04'),
+    (6, 6, '2026-04-08 09:18:00-04'),
+    (6, 7, '2026-04-09 09:10:00-04'),
+    (7, 1, '2026-04-09 10:00:00-04'),
+    (7, 2, '2026-04-09 10:05:00-04'),
+    (8, 3, '2026-04-10 11:00:00-04'),
+    (8, 6, '2026-04-10 11:00:00-04'),
+    (9, 6, '2026-04-04 08:30:00-04'),
+    (9, 7, '2026-04-04 10:05:00-04'),
+    (9, 8, '2026-04-04 11:05:00-04'),
+    (9, 10, '2026-04-05 11:05:00-04'),
+    (10, 6, '2026-04-05 13:00:00-04'),
+    (10, 8, '2026-04-05 13:05:00-04'),
+    (11, 9, '2026-04-05 08:30:00-04'),
+    (11, 10, '2026-04-05 10:05:00-04'),
+    (11, 12, '2026-04-06 10:05:00-04'),
+    (12, 9, '2026-04-06 15:00:00-04'),
+    (12, 12, '2026-04-06 15:05:00-04');
+
+INSERT INTO channel_invitations(channel_invitation_id, channel_id, invited_user_id, invited_by, status, invited_at, responded_at) VALUES
+    (1, 1, 4, 1, 'pending', '2026-04-15 09:00:00-04', NULL),
+    (2, 2, 3, 2, 'pending', '2026-04-17 09:00:00-04', NULL),
+    (3, 2, 4, 2, 'pending', '2026-04-24 09:00:00-04', NULL),
+    (4, 3, 3, 1, 'pending', '2026-04-16 09:00:00-04', NULL),
+    (5, 5, 1, 3, 'accepted', '2026-04-03 09:00:00-04', '2026-04-04 12:00:00-04'),
+    (6, 6, 4, 6, 'pending', '2026-04-18 09:00:00-04', NULL),
+    (7, 6, 5, 6, 'pending', '2026-04-23 09:00:00-04', NULL),
+    (8, 7, 3, 1, 'pending', '2026-04-19 09:00:00-04', NULL),
+    (9, 9, 10, 6, 'accepted', '2026-04-04 09:00:00-04', '2026-04-05 11:00:00-04'),
+    (10, 10, 7, 8, 'declined', '2026-04-06 09:00:00-04', '2026-04-07 10:00:00-04'),
+    (11, 11, 11, 9, 'pending', '2026-04-20 09:00:00-04', NULL),
+    (12, 12, 10, 9, 'revoked', '2026-04-07 09:00:00-04', '2026-04-08 12:00:00-04');
+
+INSERT INTO messages(message_id, channel_id, sender_id, body, posted_at) VALUES
+    (1, 1, 1, 'Welcome to Acme Lab general.', '2026-04-02 08:20:00-04'),
+    (2, 1, 2, 'The perpendicular test rig is ready.', '2026-04-03 10:00:00-04'),
+    (3, 1, 3, 'I can review the onboarding checklist.', '2026-04-03 12:30:00-04'),
+    (4, 2, 2, 'Product roadmap review at 3pm.', '2026-04-05 10:10:00-04'),
+    (5, 3, 1, 'Private hiring notes mention perpendicular leadership fit.', '2026-04-06 12:00:00-04'),
+    (6, 4, 1, 'Bob, can you check the direct channel setup?', '2026-04-07 12:05:00-04'),
+    (7, 5, 3, 'Maintenance elevator request is open.', '2026-04-04 09:30:00-04'),
+    (8, 5, 1, 'The stair railing is perpendicular to the landing.', '2026-04-04 12:15:00-04'),
+    (9, 2, 1, 'Launch checklist moved to the product board.', '2026-04-08 09:20:00-04'),
+    (10, 2, 1, 'Please review the signup copy before Friday.', '2026-04-08 10:05:00-04'),
+    (11, 2, 1, 'Roadmap notes now include the browser demo path.', '2026-04-08 11:30:00-04'),
+    (12, 6, 6, 'Sprint planning starts with the database migration review.', '2026-04-08 09:30:00-04'),
+    (13, 6, 3, 'I will bring the invitation edge cases.', '2026-04-08 09:45:00-04'),
+    (14, 6, 7, 'The QA checklist needs one more search scenario.', '2026-04-09 09:40:00-04'),
+    (15, 7, 1, 'Leadership notes: keep admin controls simple.', '2026-04-09 10:15:00-04'),
+    (16, 7, 1, 'Only channel members should see this budget thread.', '2026-04-09 10:45:00-04'),
+    (17, 8, 3, 'Maya, can you help with the onboarding screen?', '2026-04-10 11:10:00-04'),
+    (18, 8, 6, 'Yes, I will mock up the workspace selector.', '2026-04-10 11:12:00-04'),
+    (19, 5, 3, 'The elevator vendor confirmed Tuesday morning.', '2026-04-05 09:15:00-04'),
+    (20, 5, 1, 'I added the maintenance note to the shared log.', '2026-04-05 12:30:00-04'),
+    (21, 5, 3, 'We should invite Ken to the next board update.', '2026-04-06 09:10:00-04'),
+    (22, 9, 6, 'Welcome to the design guild workspace.', '2026-04-04 08:45:00-04'),
+    (23, 9, 7, 'I posted color contrast examples for the mockup.', '2026-04-04 10:20:00-04'),
+    (24, 9, 8, 'Research notes are linked from the channel topic.', '2026-04-04 11:30:00-04'),
+    (25, 9, 10, 'I can test the responsive layout tomorrow.', '2026-04-05 11:30:00-04'),
+    (26, 10, 6, 'Interview script draft is ready for review.', '2026-04-05 13:15:00-04'),
+    (27, 10, 8, 'Private research findings should stay in this channel.', '2026-04-05 13:45:00-04'),
+    (28, 11, 9, 'Study Hub is open for database review.', '2026-04-05 08:45:00-04'),
+    (29, 11, 10, 'I uploaded the normalization notes.', '2026-04-05 10:30:00-04'),
+    (30, 11, 12, 'Can we schedule a transaction isolation review?', '2026-04-06 10:30:00-04'),
+    (31, 12, 9, 'Exam prep channel starts with query optimization.', '2026-04-06 15:20:00-04'),
+    (32, 12, 12, 'I will summarize indexes and explain plans.', '2026-04-06 15:45:00-04'),
+    (33, 6, 1, 'The demo account list should include invited users.', '2026-04-10 09:00:00-04'),
+    (34, 2, 1, 'Search examples should include roadmap and browser.', '2026-04-10 10:00:00-04'),
+    (35, 9, 6, 'The dashboard should show unread channel counts.', '2026-04-10 11:00:00-04'),
+    (36, 10, 8, 'User quotes need anonymized labels.', '2026-04-10 13:00:00-04'),
+    (37, 11, 9, 'Bookmarkable workspace URLs would help during the demo.', '2026-04-10 14:00:00-04'),
+    (38, 12, 12, 'Prepared statements are on my study checklist.', '2026-04-10 15:00:00-04'),
+    (39, 4, 1, 'This direct message verifies one-to-one browsing.', '2026-04-11 12:00:00-04'),
+    (40, 8, 3, 'Direct messages should appear only to both participants.', '2026-04-11 12:30:00-04');
+
+SELECT setval(pg_get_serial_sequence('users', 'user_id'), (SELECT max(user_id) FROM users));
+SELECT setval(pg_get_serial_sequence('workspaces', 'workspace_id'), (SELECT max(workspace_id) FROM workspaces));
+SELECT setval(pg_get_serial_sequence('workspace_invitations', 'workspace_invitation_id'), (SELECT max(workspace_invitation_id) FROM workspace_invitations));
+SELECT setval(pg_get_serial_sequence('channels', 'channel_id'), (SELECT max(channel_id) FROM channels));
+SELECT setval(pg_get_serial_sequence('channel_invitations', 'channel_invitation_id'), (SELECT max(channel_invitation_id) FROM channel_invitations));
+SELECT setval(pg_get_serial_sequence('messages', 'message_id'), (SELECT max(message_id) FROM messages));
