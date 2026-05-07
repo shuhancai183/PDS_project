@@ -904,6 +904,11 @@ def withdraw_message(message_id):
         flash("You can only withdraw your own messages.", "error")
         return redirect(url_for("channel", channel_id=message["channel_id"]))
     if message["withdrawn_at"] is None:
+        message_bookmark_url = (
+            url_for("channel", channel_id=message["channel_id"])
+            + f"#message-{message_id}"
+        )
+        ensure_bookmarks_schema()
         with get_db(), get_db().cursor() as cur:
             cur.execute(
                 """
@@ -915,6 +920,14 @@ def withdraw_message(message_id):
                   AND withdrawn_at IS NULL
                 """,
                 (g.user["user_id"], message_id, g.user["user_id"]),
+            )
+            cur.execute(
+                """
+                DELETE FROM bookmarks
+                WHERE target_type = 'message'
+                  AND target_url = %s
+                """,
+                (message_bookmark_url,),
             )
         flash("Message withdrawn.", "success")
     else:
