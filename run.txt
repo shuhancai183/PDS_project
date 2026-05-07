@@ -108,8 +108,8 @@ After reset, start the app again:
    with the withdrawn placeholder within 3 seconds.
 8. In another browser, send a workspace or channel invitation while the invited user is on the
    dashboard; it should appear there within 3 seconds.
-9. Bookmark Acme Lab or the channel, then return to the dashboard and open it
-   from Your bookmarks.
+9. Bookmark Acme Lab, the channel, or an individual message, then return to the
+   dashboard and open it from Your bookmarks.
 10. Log out and log in as the invited user to accept or decline the invitation.
 11. Log in as cara / hash_cara.
 12. Search for perpendicular and bookmark that search result page.

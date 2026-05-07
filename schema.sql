@@ -58,7 +58,7 @@ CREATE TABLE bookmarks (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (user_id, target_url),
     CONSTRAINT bookmarks_type_ck
-        CHECK (target_type IN ('workspace', 'channel', 'search')),
+        CHECK (target_type IN ('workspace', 'channel', 'search', 'message')),
     CONSTRAINT bookmarks_url_not_blank_ck CHECK (length(btrim(target_url)) > 0)
 );
 

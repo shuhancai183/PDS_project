@@ -254,6 +254,12 @@ textarea {
   padding-bottom: 0.7rem;
 }
 
+.message:target {
+  background: #fff8e6;
+  border-radius: 6px;
+  padding: 0.7rem;
+}
+
 .message p {
   margin: 0.3rem 0 0;
 }

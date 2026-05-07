@@ -5,6 +5,7 @@
   }
 
   const pollUrl = list.dataset.pollUrl;
+  const channelId = list.dataset.channelId;
   const currentUserId = Number(list.dataset.currentUserId);
   let latestMessageId = 0;
 
@@ -26,6 +27,7 @@
 
     const article = document.createElement("article");
     article.className = "message";
+    article.id = `message-${message.message_id}`;
     article.dataset.messageId = String(message.message_id);
     article.dataset.withdrawn = message.withdrawn ? "true" : "false";
 
@@ -57,6 +59,31 @@
         form.appendChild(button);
         article.appendChild(form);
       }
+
+      const bookmarkUrl = `/channels/${channelId}#message-${message.message_id}`;
+      const bookmarkForm = document.createElement("form");
+      bookmarkForm.className = "inline-form";
+      bookmarkForm.method = "post";
+      bookmarkForm.action = "/bookmarks";
+
+      const targetInput = document.createElement("input");
+      targetInput.type = "hidden";
+      targetInput.name = "target_url";
+      targetInput.value = bookmarkUrl;
+      const labelInput = document.createElement("input");
+      labelInput.type = "hidden";
+      labelInput.name = "label";
+      labelInput.value = `#message by ${message.username}: ${message.body.slice(0, 70)}`;
+      const nextInput = document.createElement("input");
+      nextInput.type = "hidden";
+      nextInput.name = "next";
+      nextInput.value = bookmarkUrl;
+      const bookmarkButton = document.createElement("button");
+      bookmarkButton.type = "submit";
+      bookmarkButton.textContent = "Bookmark message";
+
+      bookmarkForm.append(targetInput, labelInput, nextInput, bookmarkButton);
+      article.appendChild(bookmarkForm);
     }
 
     list.appendChild(article);

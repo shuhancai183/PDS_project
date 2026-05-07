@@ -32,7 +32,8 @@
       data-poll-url="{{ url_for('channel_messages_json', channel_id=channel.channel_id) }}"
     >
       {% for message in messages %}
-        <article class="message" data-message-id="{{ message.message_id }}" data-withdrawn="{{ 'true' if message.withdrawn_at else 'false' }}">
+        {% set message_url = url_for('channel', channel_id=channel.channel_id) ~ '#message-' ~ message.message_id %}
+        <article id="message-{{ message.message_id }}" class="message" data-message-id="{{ message.message_id }}" data-withdrawn="{{ 'true' if message.withdrawn_at else 'false' }}">
           <div>
             <strong>{{ message.nickname }}</strong>
             <small>@{{ message.username }} · {{ message.posted_at.strftime("%Y-%m-%d %H:%M") }}</small>
@@ -44,6 +45,20 @@
             {% if message.sender_id == g.user.user_id %}
               <form class="inline-form" method="post" action="{{ url_for('withdraw_message', message_id=message.message_id) }}">
                 <button type="submit">Withdraw</button>
+              </form>
+            {% endif %}
+            {% if message_url in message_bookmarks %}
+              <form class="inline-form" method="post" action="{{ url_for('delete_bookmark') }}">
+                <input type="hidden" name="target_url" value="{{ message_url }}">
+                <input type="hidden" name="next" value="{{ message_url }}">
+                <button type="submit">Remove bookmark</button>
+              </form>
+            {% else %}
+              <form class="inline-form" method="post" action="{{ url_for('add_bookmark') }}">
+                <input type="hidden" name="target_url" value="{{ message_url }}">
+                <input type="hidden" name="label" value="{{ channel.workspace }} / #{{ channel.name }}: {{ message.body|truncate(70, True) }}">
+                <input type="hidden" name="next" value="{{ message_url }}">
+                <button type="submit">Bookmark message</button>
               </form>
             {% endif %}
           {% endif %}

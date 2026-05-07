@@ -85,10 +85,18 @@ def ensure_bookmarks_schema():
                 created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE (user_id, target_url),
                 CONSTRAINT bookmarks_type_ck
-                    CHECK (target_type IN ('workspace', 'channel', 'search')),
+                    CHECK (target_type IN ('workspace', 'channel', 'search', 'message')),
                 CONSTRAINT bookmarks_url_not_blank_ck
                     CHECK (length(btrim(target_url)) > 0)
             )
+            """
+        )
+        cur.execute("ALTER TABLE bookmarks DROP CONSTRAINT IF EXISTS bookmarks_type_ck")
+        cur.execute(
+            """
+            ALTER TABLE bookmarks
+            ADD CONSTRAINT bookmarks_type_ck
+            CHECK (target_type IN ('workspace', 'channel', 'search', 'message'))
             """
         )
         cur.execute(
@@ -121,6 +129,8 @@ def normalize_bookmark_target(target_url):
     if parsed.path.startswith("/workspaces/"):
         return "workspace", parsed.path
     if parsed.path.startswith("/channels/"):
+        if parsed.fragment.startswith("message-"):
+            return "message", f"{parsed.path}#{parsed.fragment}"
         return "channel", parsed.path
     if parsed.path == "/search":
         query = f"?{parsed.query}" if parsed.query else ""
@@ -764,6 +774,25 @@ def channel(channel_id):
         """,
         (channel_id,),
     )
+    message_urls = [
+        url_for("channel", channel_id=channel_id) + f"#message-{message['message_id']}"
+        for message in messages
+    ]
+    ensure_bookmarks_schema()
+    message_bookmarks = set()
+    if message_urls:
+        message_bookmarks = {
+            row["target_url"]
+            for row in query_all(
+                """
+                SELECT target_url
+                FROM bookmarks
+                WHERE user_id = %s
+                  AND target_url = ANY(%s)
+                """,
+                (g.user["user_id"], message_urls),
+            )
+        }
     members = query_all(
         """
         SELECT u.username, u.nickname
@@ -781,6 +810,7 @@ def channel(channel_id):
         members=members,
         bookmarked=bookmark_for(url_for("channel", channel_id=channel_id)),
         bookmark_url=url_for("channel", channel_id=channel_id),
+        message_bookmarks=message_bookmarks,
     )
 
 
