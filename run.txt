@@ -104,12 +104,15 @@ After reset, start the app again:
 5. Withdraw your own message; the timeline should keep a withdrawn placeholder.
 6. Open the same channel in two browser windows, post in one window, and wait
    up to 3 seconds to see the other window append the message without refresh.
-7. Bookmark Acme Lab or the channel, then return to the dashboard and open it
+7. Withdraw a message in one channel window; the other window should replace it
+   with the withdrawn placeholder within 3 seconds.
+8. In another browser, send a workspace or channel invitation while the invited user is on the
+   dashboard; it should appear there within 3 seconds.
+9. Bookmark Acme Lab or the channel, then return to the dashboard and open it
    from Your bookmarks.
-8. Invite a user to a workspace or channel.
-9. Log out and log in as the invited user to accept or decline the invitation.
-10. Log in as cara / hash_cara.
-11. Search for perpendicular and bookmark that search result page.
+10. Log out and log in as the invited user to accept or decline the invitation.
+11. Log in as cara / hash_cara.
+12. Search for perpendicular and bookmark that search result page.
 
 Cara should see accessible matching messages in #general and #maintenance, but
 not the private #hiring message.

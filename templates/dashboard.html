@@ -61,34 +61,42 @@
   {% endfor %}
 </section>
 
-<section class="grid two">
-  <div class="stack">
+<section class="grid two" data-invitations-poll-url="{{ url_for('dashboard_invitations_json') }}">
+  <div class="stack" data-invite-list="workspace">
     <h2>Workspace invitations</h2>
-    {% for invite in workspace_invites %}
-      <div class="item">
+    <div data-invite-items>
+      {% for invite in workspace_invites %}
+        <div class="item">
         <span><strong>{{ invite.workspace }}</strong><small>Invited by {{ invite.invited_by }}</small></span>
         <span class="actions">
           <form method="post" action="{{ url_for('respond_workspace_invitation', invitation_id=invite.workspace_invitation_id, decision='accepted') }}"><button>Accept</button></form>
           <form method="post" action="{{ url_for('respond_workspace_invitation', invitation_id=invite.workspace_invitation_id, decision='declined') }}"><button>Decline</button></form>
         </span>
-      </div>
-    {% else %}
-      <p class="muted">No pending workspace invitations.</p>
-    {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted" data-empty-state>No pending workspace invitations.</p>
+      {% endfor %}
+    </div>
   </div>
-  <div class="stack">
+  <div class="stack" data-invite-list="channel">
     <h2>Channel invitations</h2>
-    {% for invite in channel_invites %}
-      <div class="item">
+    <div data-invite-items>
+      {% for invite in channel_invites %}
+        <div class="item">
         <span><strong>{{ invite.workspace }} / #{{ invite.channel }}</strong><small>Invited by {{ invite.invited_by }}</small></span>
         <span class="actions">
           <form method="post" action="{{ url_for('respond_channel_invitation', invitation_id=invite.channel_invitation_id, decision='accepted') }}"><button>Accept</button></form>
           <form method="post" action="{{ url_for('respond_channel_invitation', invitation_id=invite.channel_invitation_id, decision='declined') }}"><button>Decline</button></form>
         </span>
-      </div>
-    {% else %}
-      <p class="muted">No pending channel invitations.</p>
-    {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted" data-empty-state>No pending channel invitations.</p>
+      {% endfor %}
+    </div>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='dashboard_poll.js') }}"></script>
 {% endblock %}

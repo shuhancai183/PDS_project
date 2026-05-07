@@ -32,7 +32,7 @@
       data-poll-url="{{ url_for('channel_messages_json', channel_id=channel.channel_id) }}"
     >
       {% for message in messages %}
-        <article class="message" data-message-id="{{ message.message_id }}">
+        <article class="message" data-message-id="{{ message.message_id }}" data-withdrawn="{{ 'true' if message.withdrawn_at else 'false' }}">
           <div>
             <strong>{{ message.nickname }}</strong>
             <small>@{{ message.username }} · {{ message.posted_at.strftime("%Y-%m-%d %H:%M") }}</small>

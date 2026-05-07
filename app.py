@@ -140,6 +140,40 @@ def bookmark_for(target_url):
     )
 
 
+def pending_workspace_invites():
+    return query_all(
+        """
+        SELECT wi.workspace_invitation_id, w.name AS workspace, u.username AS invited_by,
+               wi.invited_at
+        FROM workspace_invitations AS wi
+        JOIN workspaces AS w ON w.workspace_id = wi.workspace_id
+        JOIN users AS u ON u.user_id = wi.invited_by
+        WHERE wi.status = 'pending'
+          AND (wi.invited_user_id = %s OR lower(wi.invited_email) = lower(%s))
+        ORDER BY wi.invited_at
+        """,
+        (g.user["user_id"], g.user["email"]),
+    )
+
+
+def pending_channel_invites():
+    return query_all(
+        """
+        SELECT ci.channel_invitation_id, c.name AS channel, w.name AS workspace,
+               u.username AS invited_by, ci.invited_at
+        FROM channel_invitations AS ci
+        JOIN channels AS c ON c.channel_id = ci.channel_id
+        JOIN workspaces AS w ON w.workspace_id = c.workspace_id
+        JOIN users AS u ON u.user_id = ci.invited_by
+        JOIN workspace_members AS wm
+          ON wm.workspace_id = c.workspace_id AND wm.user_id = ci.invited_user_id
+        WHERE ci.status = 'pending' AND ci.invited_user_id = %s
+        ORDER BY ci.invited_at
+        """,
+        (g.user["user_id"],),
+    )
+
+
 def login_required(view):
     @wraps(view)
     def wrapped_view(**kwargs):
@@ -347,34 +381,8 @@ def dashboard():
         """,
         (g.user["user_id"],),
     )
-    workspace_invites = query_all(
-        """
-        SELECT wi.workspace_invitation_id, w.name AS workspace, u.username AS invited_by,
-               wi.invited_at
-        FROM workspace_invitations AS wi
-        JOIN workspaces AS w ON w.workspace_id = wi.workspace_id
-        JOIN users AS u ON u.user_id = wi.invited_by
-        WHERE wi.status = 'pending'
-          AND (wi.invited_user_id = %s OR lower(wi.invited_email) = lower(%s))
-        ORDER BY wi.invited_at
-        """,
-        (g.user["user_id"], g.user["email"]),
-    )
-    channel_invites = query_all(
-        """
-        SELECT ci.channel_invitation_id, c.name AS channel, w.name AS workspace,
-               u.username AS invited_by, ci.invited_at
-        FROM channel_invitations AS ci
-        JOIN channels AS c ON c.channel_id = ci.channel_id
-        JOIN workspaces AS w ON w.workspace_id = c.workspace_id
-        JOIN users AS u ON u.user_id = ci.invited_by
-        JOIN workspace_members AS wm
-          ON wm.workspace_id = c.workspace_id AND wm.user_id = ci.invited_user_id
-        WHERE ci.status = 'pending' AND ci.invited_user_id = %s
-        ORDER BY ci.invited_at
-        """,
-        (g.user["user_id"],),
-    )
+    workspace_invites = pending_workspace_invites()
+    channel_invites = pending_channel_invites()
     ensure_bookmarks_schema()
     bookmarks = query_all(
         """
@@ -391,6 +399,54 @@ def dashboard():
         workspace_invites=workspace_invites,
         channel_invites=channel_invites,
         bookmarks=bookmarks,
+    )
+
+
+@app.route("/dashboard/invitations.json")
+@login_required
+def dashboard_invitations_json():
+    workspace_invites = pending_workspace_invites()
+    channel_invites = pending_channel_invites()
+    return jsonify(
+        {
+            "workspace_invites": [
+                {
+                    "id": invite["workspace_invitation_id"],
+                    "workspace": invite["workspace"],
+                    "invited_by": invite["invited_by"],
+                    "accept_url": url_for(
+                        "respond_workspace_invitation",
+                        invitation_id=invite["workspace_invitation_id"],
+                        decision="accepted",
+                    ),
+                    "decline_url": url_for(
+                        "respond_workspace_invitation",
+                        invitation_id=invite["workspace_invitation_id"],
+                        decision="declined",
+                    ),
+                }
+                for invite in workspace_invites
+            ],
+            "channel_invites": [
+                {
+                    "id": invite["channel_invitation_id"],
+                    "workspace": invite["workspace"],
+                    "channel": invite["channel"],
+                    "invited_by": invite["invited_by"],
+                    "accept_url": url_for(
+                        "respond_channel_invitation",
+                        invitation_id=invite["channel_invitation_id"],
+                        decision="accepted",
+                    ),
+                    "decline_url": url_for(
+                        "respond_channel_invitation",
+                        invitation_id=invite["channel_invitation_id"],
+                        decision="declined",
+                    ),
+                }
+                for invite in channel_invites
+            ],
+        }
     )
 
 
@@ -764,6 +820,15 @@ def channel_messages_json(channel_id):
         """,
         (channel_id, after),
     )
+    withdrawals = query_all(
+        """
+        SELECT message_id
+        FROM messages
+        WHERE channel_id = %s
+          AND withdrawn_at IS NOT NULL
+        """,
+        (channel_id,),
+    )
     return jsonify(
         {
             "messages": [
@@ -777,7 +842,8 @@ def channel_messages_json(channel_id):
                     "withdrawn": message["withdrawn_at"] is not None,
                 }
                 for message in messages
-            ]
+            ],
+            "withdrawals": [message["message_id"] for message in withdrawals],
         }
     )
 

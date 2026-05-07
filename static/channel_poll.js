@@ -27,6 +27,7 @@
     const article = document.createElement("article");
     article.className = "message";
     article.dataset.messageId = String(message.message_id);
+    article.dataset.withdrawn = message.withdrawn ? "true" : "false";
 
     const header = document.createElement("div");
     const name = document.createElement("strong");
@@ -62,6 +63,23 @@
     latestMessageId = Math.max(latestMessageId, Number(message.message_id));
   }
 
+  function markWithdrawn(messageId) {
+    const article = list.querySelector(`[data-message-id="${messageId}"]`);
+    if (!article || article.dataset.withdrawn === "true") {
+      return;
+    }
+
+    article.dataset.withdrawn = "true";
+    article.querySelectorAll("p, form.inline-form").forEach((element) => {
+      element.remove();
+    });
+
+    const body = document.createElement("p");
+    body.className = "muted";
+    body.textContent = "This message was withdrawn.";
+    article.appendChild(body);
+  }
+
   async function pollMessages() {
     if (document.hidden) {
       return;
@@ -75,6 +93,7 @@
         return;
       }
       const payload = await response.json();
+      (payload.withdrawals || []).forEach(markWithdrawn);
       payload.messages.forEach(appendMessage);
     } catch (_error) {
       // The next polling tick will try again.
