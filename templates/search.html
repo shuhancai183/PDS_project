@@ -37,7 +37,7 @@
       <a class="item" href="{{ url_for('channel', channel_id=result.channel_id) }}">
         <span>
           <strong>{{ result.workspace }} / #{{ result.channel }}</strong>
-          <small>{{ result.username }} · {{ result.posted_at.strftime("%Y-%m-%d %H:%M") }}</small>
+          <small>{{ result.username }} - {{ result.posted_at.strftime("%Y-%m-%d %H:%M") }}</small>
           <span>{{ result.body }}</span>
         </span>
       </a>

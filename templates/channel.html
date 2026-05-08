@@ -36,7 +36,7 @@
         <article id="message-{{ message.message_id }}" class="message" data-message-id="{{ message.message_id }}" data-withdrawn="{{ 'true' if message.withdrawn_at else 'false' }}">
           <div>
             <strong>{{ message.nickname }}</strong>
-            <small>@{{ message.username }} · {{ message.posted_at.strftime("%Y-%m-%d %H:%M") }}</small>
+            <small>@{{ message.username }} - {{ message.posted_at.strftime("%Y-%m-%d %H:%M") }}</small>
           </div>
           {% if message.withdrawn_at %}
             <p class="muted">This message was withdrawn.</p>

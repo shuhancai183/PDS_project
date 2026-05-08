@@ -35,7 +35,7 @@
     const name = document.createElement("strong");
     name.textContent = message.nickname;
     const meta = document.createElement("small");
-    meta.textContent = `@${message.username} · ${message.posted_at}`;
+    meta.textContent = `@${message.username} - ${message.posted_at}`;
     header.append(name, " ", meta);
     article.appendChild(header);
 

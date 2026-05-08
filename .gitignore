@@ -15,8 +15,10 @@ neno.txt
 
 snickr_part1_report.*
 snickr_part2_report.*
+snickr_final_report.*
 !snickr_part1_report.pdf
 !snickr_part2_report.pdf
+!snickr_final_report.pdf
 
 *.aux
 *.fdb_latexmk

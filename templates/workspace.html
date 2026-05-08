@@ -31,7 +31,7 @@
         <span>
           <strong>#{{ channel.name }}</strong>
           <small>
-            {{ channel.channel_type }} channel{% if channel.channel_type == "public" and not channel.is_member %} · click to join{% endif %}
+            {{ channel.channel_type }} channel{% if channel.channel_type == "public" and not channel.is_member %} - click to join{% endif %}
           </small>
         </span>
         <span class="pill">{{ channel.message_count }} messages</span>
